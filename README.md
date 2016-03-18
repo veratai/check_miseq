@@ -18,8 +18,7 @@ python ~/scripts/checkMiSeq.py -path /home/veratai/test/ -output checkMiseq.txt 
 # checkMiSeq_refseqs_withoutHIVHCV.fasta
 - fasta file of reference genomes, available on bulbasaur at: /home/veratai/RefSeqs/checkMiSeq_refseqs_withoutHIVHCV.fasta
 - from the initial version (checkMiSeq_refseqs.fasta), the HIV and HCV genomes have been removed in order to integrate with the MiCall pipeline
-- a bowtie2 index is required for the reference genomes to be used with checkMiSeq.py
-- but it has not been built, because these references will need to be combined with the mapping step in the MiCall pipeline
+- a bowtie2 index is required for the reference genomes to be used with checkMiSeq.py, but it has not been built because these references will need to be combined with the mapping step in the MiCall pipeline
 - the reference genomes (and their genbank accession) are:
   phiX174_sensulato_NC_001422, 
   EcoliK12_substrMG1655_NC_000913, 
