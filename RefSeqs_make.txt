@@ -1,0 +1,113 @@
+#get genome seqs from genbank
+#use as reference set to characterize composition of MiSeq Illumina sequencing runs
+#specifically concerned with contamination from phiX174 leaking into samples (somehow getting barcoded!), E. coli
+#and to generally get an idea of HCV, HIV, hg-38 abundances.
+#using one HCV genome per subtype (from gb-ref2.fa)
+
+#pick one subtype genome
+python ~/PythonScripts/fasta_oneHCVsubtype.py -f ~/mixed-hcv/data/gb-ref2/gb-ref2.fa -o HCV_onesubtype.fasta
+
+#HIV1 and HIV2 genomes
+#GBvirusC genome
+#GBvirusB genome
+#"new" pegivirus
+#Moloney murine leukemia virus
+
+cat phiX174_sensulato_NC_001422.fasta > checkMiSeq_refseqs.fasta
+cat EcoliK12_substrMG1655_NC_000913.fasta >> checkMiSeq_refseqs.fasta
+cat EcoliRR1_CP011113.fasta >> checkMiSeq_refseqs.fasta
+cat Pacnes_CP006032.fasta >> checkMiSeq_refseqs.fasta
+cat HCV_onesubtype.fasta >> checkMiSeq_refseqs.fasta
+cat HIV1_HXB2_K03455.fasta >> checkMiSeq_refseqs.fasta
+cat HIV1_NC_001802.fasta >> checkMiSeq_refseqs.fasta
+cat GBvirusC_NC_001710.fasta >> checkMiSeq_refseqs.fasta
+cat GBvirusB_NC_001655.fasta >> checkMiSeq_refseqs.fasta
+cat Human_pegivirus2_NC_027998.fasta >> checkMiSeq_refseqs.fasta
+cat HBV_ayw_NC_003977.fasta >> checkMiSeq_refseqs.fasta
+cat Moloney_murine_leukemia_virus_NC_001501.fasta >> checkMiSeq_refseqs.fasta
+
+#do not include HIV2
+#cat HIV2_NC_001722.fasta >> checkMiSeq_refseqs.fasta
+
+
+#add hg-38
+cat ~/SequencesGenomes/hg38_chroms/chr1.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr2.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr3.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr4.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr5.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr6.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr7.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr8.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr9.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr10.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr11.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr12.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr13.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr14.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr15.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr16.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr17.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr18.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr19.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr20.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr21.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chr22.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chrX.fa >> checkMiSeq_refseqs.fasta
+cat ~/SequencesGenomes/hg38_chroms/chrY.fa >> checkMiSeq_refseqs.fasta
+
+#also chrM = mitochondria
+cat ~/SequencesGenomes/hg38_chroms/chrM.fa >> checkMiSeq_refseqs.fasta
+
+#and all chrUn seqs
+FILES=~/SequencesGenomes/hg38_chroms/chrUn*
+for sally in $FILES;
+do
+	echo $sally
+	cat $sally >> checkMiSeq_refseqs.fasta
+done
+
+#change name of hg38 seqs
+sed -i.bck 's/chr/hg38_chr/g' checkMiSeq_refseqs.fasta
+
+grep "chr" checkMiSeq_refseqs.fasta
+
+#remove back-up file
+rm checkMiSeq_refseqs.fasta.bck
+
+#add one more potential contaminant
+cat ~/RefSeqs/Pdenitrificans_PD1222.fasta >> checkMiSeq_refseqs.fasta
+
+
+#transfer to Bulbasaur
+#create bowtie2 index
+nohup bowtie2-build checkMiSeq_refseqs.fasta checkMiSeq_refseqs &
+
+
+##March 3, 2016
+
+#give RefSeqs to Don to incorporate into MiCall pipeline
+#MiCall already maps to HIV and HCV, so remove these from checkMiSeq_refseqs.fasta
+
+#remove lines for sequences from from HCV_onesubtype (starting from >HCV-1b-U89019) to HIV1_NC_001802 (=133 lines)
+grep -n ">HCV-1b-U89019" checkMiSeq_refseqs.fasta
+#159273:>HCV-1b-U89019
+grep -n ">HIV1_NC_001802" checkMiSeq_refseqs.fasta
+#159539:>HIV1_NC_001802
+#159539 + 133 (lines of seq) = 159672
+#62081369 (lines of file) - 159672 +1 = 61921698
+
+#get first bit of file, everything before >HCV-1b-U89019
+head -159272 checkMiSeq_refseqs.fasta > checkMiSeq_refseqs_withoutHIVHCV.fasta
+#get second bit of file, starting from 159672 (after last seq line of >HIV1_NC_001802) the end
+tail -61921698 checkMiSeq_refseqs.fasta >> checkMiSeq_refseqs_withoutHIVHCV.fasta
+
+=checkMiSeq_refseqs_withoutHIVHCV.fasta
+
+
+
+
+
+
+
+
