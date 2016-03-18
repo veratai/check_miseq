@@ -32,8 +32,8 @@ python ~/scripts/checkMiSeq.py -path /home/veratai/test/ -output checkMiseq.txt 
   Pdenitrificans_PD1222, 
   hg38 (human genome, version 38)
 
-# checkMiSeq.R
+# checkMiSeq_allSamples.R
 - R script to make barplots of the number of reads hitting the references from the csv file produced by checkMiSeq.py
 - eg. command: 
-Rscript ~/RScripts/checkMiSeq.R checkMiseq.txt
+Rscript ~/RScripts/checkMiSeq_allSamples.R checkMiseq.txt
 
