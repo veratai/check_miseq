@@ -42,5 +42,4 @@ python ~/scripts/checkMiSeq.py -path /home/veratai/test/ -output checkMiseq.txt 
 - eg. command: 
 Rscript ~/RScripts/checkMiSeq_allSamples.R checkMiseq.txt
 - v2 - have all references in the legend, even if 0 reads map to them
-    - make code more efficient by using plyr functions
-
+ 
