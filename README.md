@@ -41,6 +41,6 @@ python ~/scripts/checkMiSeq.py -path /home/veratai/test/ -output checkMiseq.txt 
 - R script to make barplots of the number of reads hitting the references from the csv file produced by checkMiSeq.py
 - eg. command: 
 Rscript ~/RScripts/checkMiSeq_allSamples.R checkMiseq.txt
--v2 - have all references in the legend, even if 0 reads map to them
+- v2 - have all references in the legend, even if 0 reads map to them
     - make code more efficient by using plyr functions
 
